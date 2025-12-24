@@ -1,0 +1,594 @@
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Регистрация - Антикафе "Чилл"</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            background-color: #0a192f;
+            color: #ccd6f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+        
+        .register-container {
+            max-width: 500px;
+            width: 100%;
+            margin: auto;
+        }
+        
+        .register-card {
+            background-color: #112240;
+            border: 1px solid #233554;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .register-header {
+            background: linear-gradient(135deg, #0a192f 0%, #1a365d 100%);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid #233554;
+        }
+        
+        .register-logo {
+            color: #64ffda;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .register-title {
+            color: #e6f1ff;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .register-subtitle {
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+        
+        .register-body {
+            padding: 2rem;
+        }
+        
+        .form-control {
+            background-color: #0a192f;
+            border: 1px solid #233554;
+            color: #ccd6f6;
+            padding: 0.75rem 1rem;
+        }
+        
+        .form-control:focus {
+            background-color: #112240;
+            border-color: #64ffda;
+            color: #ccd6f6;
+            box-shadow: 0 0 0 0.25rem rgba(100, 255, 218, 0.25);
+        }
+        
+        .form-label {
+            color: #8892b0;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-register {
+            background: linear-gradient(135deg, #233554 0%, #0a192f 100%);
+            border: 2px solid #64ffda;
+            color: #64ffda;
+            font-weight: 600;
+            padding: 0.75rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-register:hover {
+            background: #64ffda;
+            color: #0a192f;
+            border-color: #64ffda;
+        }
+        
+        .btn-register:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .alert {
+            background-color: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            color: #F44336;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-color: rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+        }
+        
+        .register-footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid #233554;
+            background-color: #0a192f;
+        }
+        
+        .register-footer a {
+            color: #64ffda;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .register-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .password-requirements {
+            background-color: rgba(17, 34, 64, 0.5);
+            border: 1px solid #233554;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 1rem;
+            color: #8892b0;
+        }
+        
+        .password-requirements ul {
+            margin-bottom: 0;
+            padding-left: 1.2rem;
+        }
+        
+        .password-requirements li {
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+        
+        .requirement-met {
+            color: #4CAF50;
+        }
+        
+        .requirement-not-met {
+            color: #F44336;
+        }
+        
+        .back-to-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .back-to-home a {
+            color: #64ffda;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(17, 34, 64, 0.8);
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #233554;
+            transition: all 0.3s;
+        }
+        
+        .back-to-home a:hover {
+            background-color: #112240;
+            border-color: #64ffda;
+        }
+        
+        .progress {
+            height: 4px;
+            background-color: #0a192f;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar {
+            background-color: #64ffda;
+            transition: width 0.3s ease;
+        }
+        
+        @media (max-width: 768px) {
+            .back-to-home {
+                position: static;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            
+            body {
+                padding: 20px;
+            }
+            
+            .register-container {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Кнопка назад -->
+    <div class="back-to-home">
+        <a href="{% url 'home' %}">
+            <i class="bi bi-arrow-left"></i>
+            <span>На главную</span>
+        </a>
+    </div>
+    
+    <div class="register-container">
+        <div class="register-card">
+            <!-- Заголовок -->
+            <div class="register-header">
+                <div class="register-logo">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                <h1 class="register-title">Создание аккаунта</h1>
+                <p class="register-subtitle">Присоединяйтесь к нашему сообществу</p>
+            </div>
+            
+            <!-- Тело формы -->
+            <div class="register-body">
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="bi {% if message.tags == 'success' %}bi-check-circle{% else %}bi-info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Имя пользователя -->
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person-badge me-1"></i>Имя пользователя *
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="username" 
+                               name="username" 
+                               placeholder="Придумайте уникальное имя"
+                               required
+                               minlength="3"
+                               maxlength="30">
+                        <div class="invalid-feedback">
+                            Имя пользователя должно содержать от 3 до 30 символов.
+                        </div>
+                        <small class="form-text" style="color: #8892b0;">
+                            Только буквы, цифры и @/./+/-/_
+                        </small>
+                    </div>
+                    
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope me-1"></i>Email *
+                        </label>
+                        <input type="email" 
+                               class="form-control" 
+                               id="email" 
+                               name="email" 
+                               placeholder="example@mail.com"
+                               required>
+                        <div class="invalid-feedback">
+                            Пожалуйста, введите корректный email адрес.
+                        </div>
+                    </div>
+                    
+                    <!-- Имя -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="first_name" class="form-label">
+                                <i class="bi bi-person me-1"></i>Имя *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="first_name" 
+                                   name="first_name" 
+                                   placeholder="Ваше имя"
+                                   required>
+                            <div class="invalid-feedback">
+                                Пожалуйста, введите ваше имя.
+                            </div>
+                        </div>
+                        
+                        <!-- Фамилия -->
+                        <div class="col-md-6 mb-3">
+                            <label for="last_name" class="form-label">
+                                <i class="bi bi-person me-1"></i>Фамилия *
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   id="last_name" 
+                                   name="last_name" 
+                                   placeholder="Ваша фамилия"
+                                   required>
+                            <div class="invalid-feedback">
+                                Пожалуйста, введите вашу фамилию.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Пароль -->
+                    <div class="mb-3">
+                        <label for="password1" class="form-label">
+                            <i class="bi bi-lock me-1"></i>Пароль *
+                        </label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password1" 
+                               name="password1" 
+                               placeholder="Создайте надежный пароль"
+                               required
+                               minlength="8"
+                               oninput="checkPasswordStrength()">
+                        <div class="invalid-feedback">
+                            Пароль должен содержать минимум 8 символов.
+                        </div>
+                        
+                        <!-- Индикатор сложности пароля -->
+                        <div class="progress">
+                            <div id="password-strength-bar" class="progress-bar" style="width: 0%"></div>
+                        </div>
+                        
+                        <!-- Требования к паролю -->
+                        <div class="password-requirements">
+                            <p class="mb-2" style="font-size: 0.9rem;">Требования к паролю:</p>
+                            <ul>
+                                <li id="req-length" class="requirement-not-met">
+                                    Минимум 8 символов
+                                </li>
+                                <li id="req-letter" class="requirement-not-met">
+                                    Содержит буквы
+                                </li>
+                                <li id="req-number" class="requirement-not-met">
+                                    Содержит цифры
+                                </li>
+                                <li id="req-special" class="requirement-not-met">
+                                    Содержит специальные символы
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Подтверждение пароля -->
+                    <div class="mb-4">
+                        <label for="password2" class="form-label">
+                            <i class="bi bi-lock-fill me-1"></i>Подтверждение пароля *
+                        </label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password2" 
+                               name="password2" 
+                               placeholder="Повторите пароль"
+                               required
+                               minlength="8"
+                               oninput="checkPasswordMatch()">
+                        <div class="invalid-feedback" id="password-match-feedback">
+                            Пароли должны совпадать.
+                        </div>
+                        <div class="valid-feedback d-none" id="password-match-success">
+                            Пароли совпадают ✓
+                        </div>
+                    </div>
+                    
+                    <!-- Телефон (необязательно) -->
+                    <div class="mb-4">
+                        <label for="phone" class="form-label">
+                            <i class="bi bi-telephone me-1"></i>Телефон (необязательно)
+                        </label>
+                        <input type="tel" 
+                               class="form-control" 
+                               id="phone" 
+                               name="phone" 
+                               placeholder="+7 (999) 123-45-67">
+                        <small class="form-text" style="color: #8892b0;">
+                            Для быстрой связи по бронированиям
+                        </small>
+                    </div>
+                    
+                    <!-- Согласие с условиями -->
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
+                        <label class="form-check-label" for="terms" style="font-size: 0.9rem;">
+                            Я соглашаюсь с <a href="#" style="color: #64ffda;">условиями использования</a> и 
+                            <a href="#" style="color: #64ffda;">политикой конфиденциальности</a> *
+                        </label>
+                        <div class="invalid-feedback">
+                            Вы должны согласиться с условиями.
+                        </div>
+                    </div>
+                    
+                    <!-- Кнопка регистрации -->
+                    <div class="d-grid gap-2 mb-4">
+                        <button type="submit" class="btn btn-register" id="register-button">
+                            <i class="bi bi-person-plus me-2"></i>Создать аккаунт
+                        </button>
+                    </div>
+                </form>
+                
+                <!-- Уже есть аккаунт -->
+                <div class="text-center">
+                    <p style="color: #8892b0; margin-bottom: 0.5rem;">
+                        Уже есть аккаунт?
+                    </p>
+                    <a href="{% url 'login' %}">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Войти в систему
+                    </a>
+                    
+                    <div class="mt-4 pt-3 border-top border-secondary">
+                        <p class="mb-0" style="color: #8892b0; font-size: 0.85rem;">
+                            <i class="bi bi-shield-check me-1"></i>
+                            Ваши данные надежно защищены
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="register-footer">
+                <p style="color: #8892b0; font-size: 0.9rem; margin-bottom: 0;">
+                    &copy; 2025 Антикафе "Чилл". Все права защищены.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Валидация формы
+        (function() {
+            'use strict'
+            
+            var forms = document.querySelectorAll('.needs-validation')
+            
+            Array.prototype.slice.call(forms)
+                .forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+        
+        // Проверка сложности пароля
+        function checkPasswordStrength() {
+            const password = document.getElementById('password1').value;
+            const strengthBar = document.getElementById('password-strength-bar');
+            const requirements = {
+                length: document.getElementById('req-length'),
+                letter: document.getElementById('req-letter'),
+                number: document.getElementById('req-number'),
+                special: document.getElementById('req-special')
+            };
+            
+            let score = 0;
+            let totalRequirements = 0;
+            let metRequirements = 0;
+            
+            // Проверка длины
+            if (password.length >= 8) {
+                requirements.length.classList.remove('requirement-not-met');
+                requirements.length.classList.add('requirement-met');
+                score += 25;
+                metRequirements++;
+            } else {
+                requirements.length.classList.remove('requirement-met');
+                requirements.length.classList.add('requirement-not-met');
+            }
+            totalRequirements++;
+            
+            // Проверка букв
+            if (/[a-zA-Z]/.test(password)) {
+                requirements.letter.classList.remove('requirement-not-met');
+                requirements.letter.classList.add('requirement-met');
+                score += 25;
+                metRequirements++;
+            } else {
+                requirements.letter.classList.remove('requirement-met');
+                requirements.letter.classList.add('requirement-not-met');
+            }
+            totalRequirements++;
+            
+            // Проверка цифр
+            if (/\d/.test(password)) {
+                requirements.number.classList.remove('requirement-not-met');
+                requirements.number.classList.add('requirement-met');
+                score += 25;
+                metRequirements++;
+            } else {
+                requirements.number.classList.remove('requirement-met');
+                requirements.number.classList.add('requirement-not-met');
+            }
+            totalRequirements++;
+            
+            // Проверка специальных символов
+            if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+                requirements.special.classList.remove('requirement-not-met');
+                requirements.special.classList.add('requirement-met');
+                score += 25;
+                metRequirements++;
+            } else {
+                requirements.special.classList.remove('requirement-met');
+                requirements.special.classList.add('requirement-not-met');
+            }
+            totalRequirements++;
+            
+            // Обновление прогресс-бара
+            strengthBar.style.width = score + '%';
+            
+            // Цвет прогресс-бара в зависимости от силы пароля
+            if (score < 50) {
+                strengthBar.style.backgroundColor = '#F44336'; // Красный
+            } else if (score < 75) {
+                strengthBar.style.backgroundColor = '#FFC107'; // Желтый
+            } else {
+                strengthBar.style.backgroundColor = '#4CAF50'; // Зеленый
+            }
+        }
+        
+        // Проверка совпадения паролей
+        function checkPasswordMatch() {
+            const password1 = document.getElementById('password1').value;
+            const password2 = document.getElementById('password2').value;
+            const matchFeedback = document.getElementById('password-match-feedback');
+            const matchSuccess = document.getElementById('password-match-success');
+            const registerButton = document.getElementById('register-button');
+            
+            if (password2.length > 0) {
+                if (password1 === password2) {
+                    matchFeedback.classList.add('d-none');
+                    matchSuccess.classList.remove('d-none');
+                    registerButton.disabled = false;
+                } else {
+                    matchFeedback.classList.remove('d-none');
+                    matchSuccess.classList.add('d-none');
+                    registerButton.disabled = true;
+                }
+            } else {
+                matchFeedback.classList.add('d-none');
+                matchSuccess.classList.add('d-none');
+            }
+        }
+        
+        // Автофокус на первое поле
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('username').focus();
+            
+            // Инициализация проверки пароля
+            checkPasswordStrength();
+        });
+        
+        // Маска для телефона
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 0) {
+                if (value[0] !== '7' && value[0] !== '8') {
+                    value = '7' + value;
+                }
+                let formatted = '+7';
+                if (value.length > 1) formatted += ' (' + value.substring(1, 4);
+                if (value.length > 4) formatted += ') ' + value.substring(4, 7);
+                if (value.length > 7) formatted += '-' + value.substring(7, 9);
+                if (value.length > 9) formatted += '-' + value.substring(9, 11);
+                e.target.value = formatted.substring(0, 18);
+            }
+        });
+    </script>
+</body>

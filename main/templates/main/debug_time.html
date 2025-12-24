@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Отладка времени</title>
+    <style>
+        table { border-collapse: collapse; margin: 20px 0; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .active-true { background-color: #d4edda; }
+        .active-false { background-color: #f8d7da; }
+        .error { color: red; font-weight: bold; }
+        .success { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>Отладка времени сервера</h1>
+    
+    {% if messages %}
+    <div style="margin: 20px 0; padding: 10px; background-color: #f8f9fa; border: 1px solid #ddd;">
+        {% for message in messages %}
+        <div class="{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <h2>Текущее время сервера:</h2>
+    <ul>
+        <li><strong>timezone.now():</strong> {{ timezone_now }}</li>
+        <li><strong>timezone.localtime():</strong> {{ timezone_now_local }}</li>
+        <li><strong>datetime.now():</strong> {{ datetime_now }}</li>
+        <li><strong>Текущий часовой пояс Django:</strong> {{ current_timezone }}</li>
+        <li><strong>USE_TZ в settings.py:</strong> {{ use_tz_setting }}</li>
+        <li><strong>TIME_ZONE в settings.py:</strong> {{ time_zone_setting }}</li>
+        <li><strong>Используются ли часовые пояса:</strong> 
+            {% if timezone_now.tzinfo %}
+                <span class="success">ДА (timezone.now() имеет часовой пояс)</span>
+            {% else %}
+                <span class="error">НЕТ (timezone.now() НЕ имеет часового пояса)</span>
+            {% endif %}
+        </li>
+    </ul>
+    
+    <h2>Бронирования (последние 10):</h2>
+    {% if bookings_info %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Зона</th>
+            <th>Начало (UTC/сервер)</th>
+            <th>Конец (UTC/сервер)</th>
+            <th>Начало (местное)</th>
+            <th>Конец (местное)</th>
+            <th>Статус</th>
+            <th>Активно сейчас?</th>
+        </tr>
+        {% for booking in bookings_info %}
+        <tr class="active-{{ booking.is_active }}">
+            <td>{{ booking.id }}</td>
+            <td>{{ booking.zone }}</td>
+            <td>{{ booking.start }}</td>
+            <td>{{ booking.end }}</td>
+            <td>{{ booking.start_local }}</td>
+            <td>{{ booking.end_local }}</td>
+            <td>{{ booking.status }}</td>
+            <td>
+                {% if booking.is_active %}
+                <span class="success">ДА</span>
+                {% else %}
+                <span class="error">НЕТ</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>Нет бронирований в базе данных.</p>
+    {% endif %}
+    
+    <h2>Зоны и доступные места:</h2>
+    {% if zones_info %}
+    <table>
+        <tr>
+            <th>Зона</th>
+            <th>Вместимость</th>
+            <th>Свободно сейчас</th>
+            <th>Статус</th>
+            <th>Занято мест</th>
+        </tr>
+        {% for zone in zones_info %}
+        <tr>
+            <td>{{ zone.zone.title }}</td>
+            <td>{{ zone.capacity }}</td>
+            <td>{{ zone.available_seats }}</td>
+            <td>
+                {% if zone.status == 'fully_available' %}
+                    <span class="success">Свободно</span>
+                {% elif zone.status == 'partially_available' %}
+                    <span style="color: orange;">Частично занято</span>
+                {% else %}
+                    <span class="error">Занято</span>
+                {% endif %}
+            </td>
+            <td>{{ zone.capacity|add:"-"|add:zone.available_seats }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <p>Нет зон в базе данных.</p>
+    {% endif %}
+    
+    <h2>Создать тестовое бронирование:</h2>
+    <form action="" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="action" value="create_test">
+        <button type="submit">Создать тестовое бронирование на текущее время</button>
+        <p><small>Создаст бронирование, которое началось 30 минут назад и закончится через 30 минут</small></p>
+    </form>
+    
+    <h2>Проверка API:</h2>
+    <ul>
+        <li><a href="/api/availability/" target="_blank">API доступности</a></li>
+        <li><a href="{% url 'zones' %}" target="_blank">Страница зон</a></li>
+        <li><a href="{% url 'booking' %}" target="_blank">Страница бронирования</a></li>
+        <li><a href="/admin/main/booking/" target="_blank">Админка бронирований</a></li>
+    </ul>
+</body>
+</html>

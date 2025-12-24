@@ -1,0 +1,346 @@
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход в систему - Антикафе "Чилл"</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+        body {
+            background-color: #0a192f;
+            color: #ccd6f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 40px;
+            padding-bottom: 40px;
+        }
+        
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+            margin: auto;
+        }
+        
+        .login-card {
+            background-color: #112240;
+            border: 1px solid #233554;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #0a192f 0%, #1a365d 100%);
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid #233554;
+        }
+        
+        .login-logo {
+            color: #64ffda;
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .login-title {
+            color: #e6f1ff;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-subtitle {
+            color: #8892b0;
+            font-size: 0.9rem;
+        }
+        
+        .login-body {
+            padding: 2rem;
+        }
+        
+        .form-control {
+            background-color: #0a192f;
+            border: 1px solid #233554;
+            color: #ccd6f6;
+            padding: 0.75rem 1rem;
+        }
+        
+        .form-control:focus {
+            background-color: #112240;
+            border-color: #64ffda;
+            color: #ccd6f6;
+            box-shadow: 0 0 0 0.25rem rgba(100, 255, 218, 0.25);
+        }
+        
+        .form-label {
+            color: #8892b0;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #233554 0%, #0a192f 100%);
+            border: 2px solid #64ffda;
+            color: #64ffda;
+            font-weight: 600;
+            padding: 0.75rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-login:hover {
+            background: #64ffda;
+            color: #0a192f;
+            border-color: #64ffda;
+        }
+        
+        .btn-login:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .alert {
+            background-color: rgba(244, 67, 54, 0.1);
+            border: 1px solid rgba(244, 67, 54, 0.3);
+            color: #F44336;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .alert-success {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-color: rgba(76, 175, 80, 0.3);
+            color: #4CAF50;
+        }
+        
+        .alert-info {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-color: rgba(33, 150, 243, 0.3);
+            color: #2196F3;
+        }
+        
+        .login-footer {
+            text-align: center;
+            padding: 1.5rem;
+            border-top: 1px solid #233554;
+            background-color: #0a192f;
+        }
+        
+        .login-footer a {
+            color: #64ffda;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .form-check-input:checked {
+            background-color: #64ffda;
+            border-color: #64ffda;
+        }
+        
+        .form-check-label {
+            color: #8892b0;
+        }
+        
+        .back-to-home {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+        }
+        
+        .back-to-home a {
+            color: #64ffda;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background-color: rgba(17, 34, 64, 0.8);
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #233554;
+            transition: all 0.3s;
+        }
+        
+        .back-to-home a:hover {
+            background-color: #112240;
+            border-color: #64ffda;
+        }
+        
+        @media (max-width: 768px) {
+            .back-to-home {
+                position: static;
+                margin-bottom: 20px;
+                text-align: center;
+            }
+            
+            body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Кнопка назад -->
+    <div class="back-to-home">
+        <a href="{% url 'home' %}">
+            <i class="bi bi-arrow-left"></i>
+            <span>На главную</span>
+        </a>
+    </div>
+    
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="bi bi-cup-hot-fill"></i>
+                </div>
+                <h1 class="login-title">Антикафе "Чилл"</h1>
+                <p class="login-subtitle">Войдите в свою учетную запись</p>
+            </div>
+            
+            <div class="login-body">
+                {% if error %}
+                <div class="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    {{ error }}
+                </div>
+                {% endif %}
+                
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <i class="bi {% if message.tags == 'success' %}bi-check-circle{% else %}bi-info-circle{% endif %} me-2"></i>
+                    {{ message }}
+                </div>
+                {% endfor %}
+                {% endif %}
+                
+                <form method="post" class="needs-validation" novalidate>
+                    {% csrf_token %}
+                    
+                    <!-- Поле имени пользователя/email -->
+                    <div class="mb-4">
+                        <label for="username" class="form-label">
+                            <i class="bi bi-person-fill me-1"></i>Имя пользователя или Email
+                        </label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="username" 
+                               name="username" 
+                               placeholder="Введите имя пользователя или email"
+                               required>
+                        <div class="invalid-feedback">
+                            Пожалуйста, введите имя пользователя или email.
+                        </div>
+                    </div>
+                    
+                    <!-- Поле пароля -->
+                    <div class="mb-4">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock-fill me-1"></i>Пароль
+                        </label>
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password" 
+                               placeholder="Введите пароль"
+                               required>
+                        <div class="invalid-feedback">
+                            Пожалуйста, введите пароль.
+                        </div>
+                    </div>
+                    
+                    <!-- Запомнить меня -->
+                    <div class="mb-4 form-check">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">
+                            Запомнить меня
+                        </label>
+                    </div>
+                    
+                    <!-- Кнопка входа -->
+                    <div class="d-grid gap-2 mb-4">
+                        <button type="submit" class="btn btn-login">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Войти в систему
+                        </button>
+                    </div>
+                </form>
+                
+                <div class="text-center">
+                    <p class="mb-2" style="color: #8892b0;">
+                        Нет учетной записи?
+                    </p>
+                    <a href="{% url 'register' %}" class="d-inline-block mb-3">
+                        <i class="bi bi-person-plus me-1"></i>Зарегистрироваться
+                    </a>
+                    
+                    <div class="mt-4 pt-3 border-top border-secondary">
+                        <p class="mb-0" style="color: #8892b0; font-size: 0.85rem;">
+                            <i class="bi bi-shield-lock me-1"></i>
+                            Ваши данные защищены
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="login-footer">
+                <p style="color: #8892b0; font-size: 0.9rem; margin-bottom: 0;">
+                    &copy; 2025 Антикафе "Чилл". Все права защищены.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        (function() {
+            'use strict'
+            
+            var forms = document.querySelectorAll('.needs-validation')
+            
+            Array.prototype.slice.call(forms)
+                .forEach(function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (!form.checkValidity()) {
+                            event.preventDefault()
+                            event.stopPropagation()
+                        }
+                        
+                        form.classList.add('was-validated')
+                    }, false)
+                })
+        })()
+        
+        document.querySelectorAll('.form-control').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.classList.add('focused');
+            });
+            
+            input.addEventListener('blur', function() {
+                if (!this.value) {
+                    this.parentElement.classList.remove('focused');
+                }
+            });
+        });
+        
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('username').focus();
+        });
+    </script>
+</body>

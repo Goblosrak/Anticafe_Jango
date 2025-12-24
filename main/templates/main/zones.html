@@ -1,0 +1,194 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <!-- Заголовок -->
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold mb-3">Наши зоны</h1>
+        <p class="lead text-muted mb-4">Подберите идеальное пространство для вашего отдыха или работы</p>
+    </div>
+
+    <!-- Список зон -->
+    <div class="row">
+        {% for zone in zones %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100 border-0 shadow-lg zone-card" data-zone-id="{{ zone.id }}" 
+                 style="background: linear-gradient(135deg, #112240 0%, #1a365d 50%, #112240 100%); 
+                        border: 1px solid #233554;">
+                <div class="card-body p-4 d-flex flex-column">
+                    <!-- Заголовок зоны -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="card-title mb-0" style="color: #64ffda; font-weight: bold;">
+                            <i class="bi bi-geo-alt me-2"></i>{{ zone.title }}
+                        </h5>
+                        <!-- Статус -->
+                        <span class="badge" id="badge-zone-{{ zone.id }}"
+                              style="background-color: rgba(76, 175, 80, 0.2); color: #4CAF50; font-size: 0.8rem;">
+                            {% if zone.available_seats == 0 %}
+                            <span class="badge bg-danger">Занято</span>
+                            {% elif zone.available_seats < zone.capacity %}
+                            <span class="badge bg-warning text-dark">{{ zone.available_seats }}/{{ zone.capacity }}</span>
+                            {% else %}
+                            <span class="badge bg-success">Свободно</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <!-- Описание -->
+                    <p class="card-text flex-grow-1 mb-3" style="color: #8892b0; min-height: 80px;">
+                        {{ zone.description|truncatewords:20 }}
+                    </p>
+                    
+                    <!-- Детали зоны -->
+                    <div class="mt-auto">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <small class="text-muted">
+                                <i class="bi bi-people me-1"></i>
+                                <span id="available-zone-{{ zone.id }}">{{ zone.available_seats }}</span>/{{ zone.capacity }} мест
+                            </small>
+                            <small class="fw-bold" style="color: #64ffda;">
+                                <i class="bi bi-clock me-1"></i>{{ zone.price_per_hour }} руб./час
+                            </small>
+                        </div>
+                        
+                        <!-- Прогресс-бар доступности -->
+                        <div class="progress mb-3" style="height: 6px; background-color: #0a192f;">
+                            <div id="progress-zone-{{ zone.id }}" 
+                                 class="progress-bar" 
+                                 role="progressbar" 
+                                 style="width: {% widthratio zone.available_seats zone.capacity 100 %}%; 
+                                        {% if zone.available_seats == 0 %}background-color: #F44336;
+                                        {% elif zone.available_seats < zone.capacity %}background-color: #FFC107;
+                                        {% else %}background-color: #4CAF50;{% endif %}">
+                            </div>
+                        </div>
+                        
+                        <!-- Кнопка бронирования -->
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'booking' %}" 
+                               class="btn btn-outline-primary d-flex align-items-center justify-content-center"
+                               style="border-color: #64ffda; color: #64ffda; font-weight: 500;">
+                                <i class="bi bi-calendar-check me-2"></i>Забронировать эту зону
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Footer карточки -->
+                <div class="card-footer text-center py-2" style="background-color: #0a192f; border-top: 1px solid #233554;">
+                    <small class="text-muted">
+                        <i class="bi bi-info-circle me-1"></i>Обновляется в реальном времени
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="card border-0 shadow" style="background-color: #112240; border: 1px solid #233554;">
+                <div class="card-body text-center p-5">
+                    <i class="bi bi-emoji-frown display-1 mb-3" style="color: #8892b0;"></i>
+                    <h3 style="color: #e6f1ff;">Зоны временно недоступны</h3>
+                    <p class="text-muted mb-4">Пожалуйста, проверьте позже или свяжитесь с нами для уточнения информации.</p>
+                    <a href="{% url 'contacts' %}" class="btn btn-outline-primary">
+                        <i class="bi bi-telephone me-2"></i>Связаться с нами
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Призыв к действию -->
+    <div class="card mt-5 border-0" 
+         style="background: linear-gradient(135deg, #0a192f 0%, #1a365d 50%, #0a192f 100%); 
+                border: 1px solid #233554;">
+        <div class="card-body text-center p-5">
+            <h3 class="mb-3 text-white">Не можете выбрать?</h3>
+            <p class="mb-4" style="color: #8892b0;">
+                Посмотрите доступность в реальном времени на странице бронирования или свяжитесь с нами для консультации
+            </p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="{% url 'booking' %}" class="btn px-4 py-3" 
+                   style="background-color: #233554; border: 2px solid #64ffda; color: #64ffda; font-weight: 600;">
+                    <i class="bi bi-arrow-right-circle me-2"></i>Перейти к бронированию
+                </a>
+                <a href="{% url 'contacts' %}" class="btn btn-outline-light px-4 py-3"
+                   style="border-color: #ccd6f6; color: #ccd6f6;">
+                    <i class="bi bi-chat-left-text me-2"></i>Задать вопрос
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Функция для обновления доступности всех зон
+    function updateAllZonesAvailability() {
+        fetch('/api/availability/')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.zones) {
+                    data.zones.forEach(zone => {
+                        updateZoneCard(zone);
+                    });
+                    console.log('Доступность зон обновлена:', new Date().toLocaleTimeString());
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при обновлении доступности:', error);
+            });
+    }
+    
+    // Функция для обновления конкретной карточки зоны
+    function updateZoneCard(zone) {
+        const availableElement = document.getElementById(`available-zone-${zone.id}`);
+        const badgeElement = document.getElementById(`badge-zone-${zone.id}`);
+        const progressElement = document.getElementById(`progress-zone-${zone.id}`);
+        
+        if (availableElement) {
+            availableElement.textContent = zone.available_seats;
+        }
+        
+        if (badgeElement && progressElement) {
+            let badgeClass = 'badge ';
+            let badgeText = '';
+            let progressColor = '';
+            
+            // Определяем состояние зоны
+            if (zone.available_seats === 0) {
+                badgeClass += 'bg-danger';
+                badgeText = 'Занято';
+                progressColor = '#F44336';
+            } else if (zone.available_seats < zone.capacity) {
+                badgeClass += 'bg-warning text-dark';
+                badgeText = `${zone.available_seats}/${zone.capacity}`;
+                progressColor = '#FFC107';
+            } else {
+                badgeClass += 'bg-success';
+                badgeText = 'Свободно';
+                progressColor = '#4CAF50';
+            }
+            
+            badgeElement.innerHTML = `<span class="${badgeClass}">${badgeText}</span>`;
+            
+            // Обновляем прогресс-бар
+            const percentage = Math.max(0, (zone.available_seats / zone.capacity) * 100);
+            progressElement.style.width = `${percentage}%`;
+            progressElement.style.backgroundColor = progressColor;
+        }
+    }
+    
+    // Инициализация
+    updateAllZonesAvailability(); // Первоначальная загрузка
+    
+    // Обновление каждые 30 секунд
+    setInterval(updateAllZonesAvailability, 30000);
+});
+</script>
+{% endblock %}

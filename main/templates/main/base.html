@@ -1,0 +1,509 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Антикафе "Чилл" - {% block title %}{% endblock %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    
+    <style>
+    body {
+        padding-top: 56px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #0a192f; 
+        color: #e6f1ff; 
+        min-height: 100vh;
+    }
+    
+    .navbar {
+        background-color: #112240 !important; 
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    .navbar-brand {
+        font-weight: bold;
+        color: #64ffda !important;
+    }
+    
+    .nav-link {
+        color: #ccd6f6 !important;
+        transition: color 0.3s;
+    }
+    
+    .nav-link:hover {
+        color: #64ffda !important;
+    }
+    
+    .nav-link.active {
+        color: #64ffda !important;
+        font-weight: bold;
+    }
+    
+    .auth-btn {
+        padding: 0.5rem 1.5rem !important;
+        margin-left: 0.5rem;
+        transition: all 0.3s;
+    }
+    
+    .btn-login {
+        background-color: transparent;
+        border: 2px solid #64ffda;
+        color: #64ffda;
+    }
+    
+    .btn-login:hover {
+        background-color: #64ffda;
+        color: #0a192f;
+        border-color: #64ffda;
+    }
+    
+    .btn-register {
+        background-color: #64ffda;
+        border: 2px solid #64ffda;
+        color: #0a192f;
+        font-weight: 600;
+    }
+    
+    .btn-register:hover {
+        background-color: #52d7b0;
+        border-color: #52d7b0;
+        color: #0a192f;
+    }
+    
+    .user-dropdown {
+        color: #64ffda !important;
+        background-color: transparent;
+        border: 1px solid #233554;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+    }
+    
+    .user-dropdown:hover {
+        background-color: rgba(100, 255, 218, 0.1);
+        border-color: #64ffda;
+    }
+    
+    .dropdown-menu {
+        background-color: #112240;
+        border: 1px solid #233554;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .dropdown-item {
+        color: #ccd6f6;
+        transition: all 0.2s;
+    }
+    
+    .dropdown-item:hover {
+        background-color: #233554;
+        color: #64ffda;
+    }
+    
+    .dropdown-divider {
+        border-color: #233554;
+    }
+    
+    .user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #64ffda;
+        color: #0a192f;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 8px;
+        font-size: 0.9rem;
+        font-weight: bold;
+    }
+    
+    .footer {
+        background-color: #0a192f; 
+        color: #8892b0;
+        padding: 2rem 0;
+        margin-top: 3rem;
+        border-top: 1px solid #112240;
+    }
+    
+    .card {
+        border: 1px solid #233554;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s, box-shadow 0.3s;
+        background-color: #112240;
+        color: #ccd6f6;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(100, 255, 218, 0.1);
+        border-color: #64ffda;
+    }
+    
+    .card-header {
+        background-color: #0a192f;
+        border-bottom: 1px solid #233554;
+        color: #64ffda;
+    }
+    
+    .card-footer {
+        background-color: #0a192f;
+        border-top: 1px solid #233554;
+    }
+    
+    .btn-primary {
+        background-color: #0a192f;
+        border-color: #64ffda;
+        color: #64ffda;
+        transition: all 0.3s;
+    }
+    
+    .btn-primary:hover {
+        background-color: #64ffda;
+        border-color: #64ffda;
+        color: #0a192f;
+    }
+    
+    .btn-outline-light {
+        color: #ccd6f6;
+        border-color: #ccd6f6;
+    }
+    
+    .btn-outline-light:hover {
+        background-color: #ccd6f6;
+        color: #0a192f;
+    }
+    
+    .alert {
+        background-color: #112240;
+        border: 1px solid #233554;
+        color: #ccd6f6;
+    }
+    
+    .alert-info {
+        border-color: #64ffda;
+        color: #64ffda;
+    }
+    
+    .alert-success {
+        border-color: #4CAF50;
+        color: #4CAF50;
+    }
+    
+    .alert-warning {
+        border-color: #FFC107;
+        color: #FFC107;
+    }
+    
+    .alert-danger {
+        border-color: #F44336;
+        color: #F44336;
+    }
+    
+    .form-control {
+        background-color: #0a192f;
+        border: 1px solid #233554;
+        color: #ccd6f6;
+    }
+    
+    .form-control:focus {
+        background-color: #112240;
+        border-color: #64ffda;
+        color: #ccd6f6;
+        box-shadow: 0 0 0 0.25rem rgba(100, 255, 218, 0.25);
+    }
+    
+    .form-label {
+        color: #8892b0;
+    }
+    
+    .progress {
+        background-color: #0a192f;
+    }
+    
+    .badge.bg-primary {
+        background-color: #112240 !important;
+        color: #64ffda;
+    }
+    
+    .badge.bg-success {
+        background-color: rgba(76, 175, 80, 0.2) !important;
+        color: #4CAF50;
+    }
+    
+    .badge.bg-warning {
+        background-color: rgba(255, 193, 7, 0.2) !important;
+        color: #FFC107;
+    }
+    
+    .badge.bg-danger {
+        background-color: rgba(244, 67, 54, 0.2) !important;
+        color: #F44336;
+    }
+    
+    .text-muted {
+        color: #8892b0 !important;
+    }
+    
+    .border-success {
+        border-color: #4CAF50 !important;
+    }
+    
+    .border-warning {
+        border-color: #FFC107 !important;
+    }
+    
+    .border-danger {
+        border-color: #F44336 !important;
+    }
+    
+    .table {
+        color: #ccd6f6;
+    }
+    
+    .table th {
+        border-color: #233554;
+        background-color: #112240;
+    }
+    
+    .table td {
+        border-color: #233554;
+    }
+    
+    .modal-content {
+        background-color: #112240;
+        color: #ccd6f6;
+        border: 1px solid #233554;
+    }
+    
+    .modal-header {
+        border-bottom: 1px solid #233554;
+    }
+    
+    .modal-footer {
+        border-top: 1px solid #233554;
+    }
+    
+    .nav-tabs .nav-link {
+        color: #8892b0;
+        border-color: #233554;
+    }
+    
+    .nav-tabs .nav-link.active {
+        background-color: #112240;
+        border-color: #233554 #233554 #112240;
+        color: #64ffda;
+    }
+    
+    .tab-content {
+        background-color: #112240;
+        border: 1px solid #233554;
+        border-top: none;
+        padding: 1rem;
+    }
+    
+    .accent-color {
+        color: #64ffda;
+    }
+    
+    .bg-accent {
+        background-color: #64ffda;
+        color: #0a192f;
+    }
+    
+    * {
+        transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+    }
+    
+    a:not(.btn):not(.nav-link) {
+        color: #64ffda;
+        text-decoration: none;
+    }
+    
+    a:not(.btn):not(.nav-link):hover {
+        text-decoration: underline;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        color: #e6f1ff;
+    }
+    
+    code {
+        background-color: #0a192f;
+        color: #64ffda;
+        padding: 0.2rem 0.4rem;
+        border-radius: 3px;
+    }
+    
+    pre {
+        background-color: #0a192f;
+        color: #ccd6f6;
+        border: 1px solid #233554;
+        padding: 1rem;
+        border-radius: 5px;
+    }
+</style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="bi bi-cup-hot-fill me-2"></i>Антикафе "Чилл"
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/' %}active{% endif %}" href="{% url 'home' %}">
+                            <i class="bi bi-house-door me-1"></i>Главная
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/zones/' %}active{% endif %}" href="{% url 'zones' %}">
+                            <i class="bi bi-geo-alt me-1"></i>Наши зоны
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/booking/' %}active{% endif %}" href="{% url 'booking' %}">
+                            <i class="bi bi-calendar-check me-1"></i>Бронирование
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/contacts/' %}active{% endif %}" href="{% url 'contacts' %}">
+                            <i class="bi bi-telephone me-1"></i>Контакты
+                        </a>
+                    </li>
+                    
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.path == '/profile/' %}active{% endif %}" href="{% url 'profile' %}">
+                            <i class="bi bi-person-circle me-1"></i>Личный кабинет
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+                
+                <div class="d-flex align-items-center">
+                    {% if user.is_authenticated %}
+                    <div class="dropdown">
+                        <button class="btn user-dropdown dropdown-toggle d-flex align-items-center" type="button" 
+                                id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <div class="user-avatar">
+                                {{ user.username|first|upper }}
+                            </div>
+                            <span class="d-none d-md-inline">{{ user.username }}</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                            <li>
+                                <a class="dropdown-item" href="{% url 'profile' %}">
+                                    <i class="bi bi-person me-2"></i>Личный кабинет
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'booking_history' %}">
+                                    <i class="bi bi-clock-history me-2"></i>История бронирований
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'booking' %}">
+                                    <i class="bi bi-calendar-plus me-2"></i>Новое бронирование
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" href="{% url 'logout' %}">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Выйти
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    {% else %}
+                    <a href="{% url 'login' %}" class="btn btn-login auth-btn">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>
+                        <span class="d-none d-md-inline">Войти</span>
+                        <span class="d-inline d-md-none">Вход</span>
+                    </a>
+                    <a href="{% url 'register' %}" class="btn btn-register auth-btn">
+                        <i class="bi bi-person-plus me-2"></i>
+                        <span class="d-none d-md-inline">Зарегистрироваться</span>
+                        <span class="d-inline d-md-none">Регистрация</span>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Антикафе "Чилл"</h5>
+                    <p>Место, где можно отдохнуть, поработать и провести время с друзьями в уютной атмосфере.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Контакты</h5>
+                    <p><i class="bi bi-telephone me-2"></i>+7 (999) 123-45-67</p>
+                    <p><i class="bi bi-envelope me-2"></i>info@chill-antikafe.ru</p>
+                    <p><i class="bi bi-geo-alt me-2"></i>ул. Воскресенская, д. 8, Фт. Сириус</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Часы работы</h5>
+                    <p>Пн-Пт: 9:00 - 23:00</p>
+                    <p>Сб-Вс: 10:00 - 00:00</p>
+                </div>
+            </div>
+            <hr class="bg-light">
+            <div class="text-center">
+                <p>&copy; 2025 Антикафе "Чилл". Все права защищены.</p>
+                {% if not user.is_authenticated %}
+                <p class="mt-2">
+                    <a href="{% url 'login' %}" class="text-decoration-none" style="color: #64ffda;">Войти</a> | 
+                    <a href="{% url 'register' %}" class="text-decoration-none" style="color: #64ffda;">Зарегистрироваться</a>
+                </p>
+                {% endif %}
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+ 
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                var alerts = document.querySelectorAll('.alert');
+                alerts.forEach(function(alert) {
+                    var bsAlert = new bootstrap.Alert(alert);
+                    bsAlert.close();
+                });
+            }, 5000);
+            
+            var currentPath = window.location.pathname;
+            var navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(function(link) {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active');
+                }
+            });
+
+            var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+            dropdownElementList.map(function (dropdownToggleEl) {
+                return new bootstrap.Dropdown(dropdownToggleEl);
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

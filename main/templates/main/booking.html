@@ -1,0 +1,474 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">{{ title }}</h1>
+    
+    <div class="alert alert-info mb-4">
+        <i class="bi bi-info-circle me-2"></i>
+        Информация о свободных местах обновляется автоматически. При бронировании система проверит доступность на выбранное время для указанного количества человек.
+    </div>
+    
+    <div class="row">
+        <div class="col-lg-8 mb-5">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="bi bi-calendar-check me-2"></i>Форма бронирования</h4>
+                </div>
+                <div class="card-body">
+                    {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            <i class="bi {% if message.tags == 'success' %}bi-check-circle{% elif message.tags == 'error' %}bi-exclamation-triangle{% else %}bi-info-circle{% endif %} me-2"></i>
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <form method="POST" id="bookingForm" action="{% url 'booking' %}">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <h5 class="mb-3"><i class="bi bi-geo-alt me-2"></i>Выберите зону</h5>
+                            <div class="row">
+                                {% for zone in zones %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="card zone-card" data-zone-id="{{ zone.id }}">
+                                        <div class="card-body">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="zone" 
+                                                       id="zone{{ zone.id }}" value="{{ zone.id }}"
+                                                       data-zone-capacity="{{ zone.capacity }}"
+                                                       required>
+                                                <label class="form-check-label w-100" for="zone{{ zone.id }}">
+                                                    <div class="d-flex justify-content-between align-items-start">
+                                                        <div>
+                                                            <h6 class="mb-1">{{ zone.title }}</h6>
+                                                            <small class="text-muted d-block">{{ zone.description|truncatewords:10 }}</small>
+                                                        </div>
+                                                        <span class="badge zone-badge" id="badge-zone-{{ zone.id }}">
+                                                            {% if zone.available_seats == 0 %}
+                                                            <span class="badge bg-danger">Занято</span>
+                                                            {% elif zone.available_seats < zone.capacity %}
+                                                            <span class="badge bg-warning text-dark">{{ zone.available_seats }}/{{ zone.capacity }}</span>
+                                                            {% else %}
+                                                            <span class="badge bg-success">Свободно</span>
+                                                            {% endif %}
+                                                        </span>
+                                                    </div>
+                                                    <div class="mt-2">
+                                                        <small>Вместимость: <span id="capacity-zone-{{ zone.id }}">{{ zone.capacity }}</span> чел. | Цена: {{ zone.price_per_hour }} руб./час</small>
+                                                        <div class="mt-1">
+                                                            <small>Свободно: <span id="available-zone-{{ zone.id }}">{{ zone.available_seats }}</span> мест</small>
+                                                        </div>
+                                                    </div>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5 class="mb-3"><i class="bi bi-people me-2"></i>Количество человек</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label for="number_of_people" class="form-label">Сколько человек будет? *</label>
+                                    <select class="form-select" id="number_of_people" name="number_of_people" required>
+                                        <option value="1" selected>1 человек</option>
+                                        <option value="2">2 человека</option>
+                                        <option value="3">3 человека</option>
+                                        <option value="4">4 человека</option>
+                                        <option value="5">5 человек</option>
+                                        <option value="6">6 человек</option>
+                                        <option value="7">7 человек</option>
+                                        <option value="8">8 человек</option>
+                                        <option value="9">9 человек</option>
+                                        <option value="10">10 человек</option>
+                                    </select>
+                                    <div class="invalid-feedback">
+                                        Пожалуйста, выберите количество человек.
+                                    </div>
+                                    <small class="form-text text-muted">
+                                        Максимальное количество человек зависит от выбранной зоны.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5 class="mb-3"><i class="bi bi-person me-2"></i>Ваши данные</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="name" class="form-label">Имя *</label>
+                                    <input type="text" class="form-control" id="name" name="name" required 
+                                           value="{% if user.is_authenticated %}{{ user.first_name }}{% endif %}">
+                                    <div class="invalid-feedback">
+                                        Пожалуйста, введите ваше имя.
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="phone" class="form-label">Телефон *</label>
+                                    <input type="tel" class="form-control" id="phone" name="phone" required
+                                           value="{% if user.is_authenticated and user.profile.phone %}{{ user.profile.phone }}{% endif %}">
+                                    <div class="invalid-feedback">
+                                        Пожалуйста, введите ваш телефон.
+                                    </div>
+                                </div>
+                                <div class="col-md-12 mb-3">
+                                    <label for="email" class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="email" name="email" required
+                                           value="{% if user.is_authenticated %}{{ user.email }}{% endif %}">
+                                    <div class="invalid-feedback">
+                                        Пожалуйста, введите ваш email.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h5 class="mb-3"><i class="bi bi-clock me-2"></i>Выберите время</h5>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="start_time" class="form-label">Начало *</label>
+                                    <input type="datetime-local" class="form-control" id="start_time" name="start_time" 
+                                           min="{{ current_time }}" required>
+                                    <div class="invalid-feedback">
+                                        Пожалуйста, выберите время начала.
+                                    </div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="end_time" class="form-label">Окончание *</label>
+                                    <input type="datetime-local" class="form-control" id="end_time" name="end_time" required>
+                                    <div class="invalid-feedback">
+                                        Пожалуйста, выберите время окончания.
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="alert alert-info" id="time-availability-info" style="display: none;">
+                                <i class="bi bi-info-circle me-2"></i>
+                                <span id="availability-message"></span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submit-btn">
+                                <i class="bi bi-check-circle me-2"></i>Забронировать
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>Как работает система?</h5>
+                </div>
+                <div class="card-body">
+                    <ol class="list-unstyled">
+                        <li class="mb-2">1. <strong>Выберите зону</strong> - система покажет текущую доступность</li>
+                        <li class="mb-2">2. <strong>Укажите количество человек</strong> - не больше вместимости зоны</li>
+                        <li class="mb-2">3. <strong>Введите ваши данные</strong> - имя, телефон и email</li>
+                        <li class="mb-2">4. <strong>Выберите время</strong> - система проверит доступность</li>
+                        <li class="mb-2">5. <strong>Забронируйте</strong> - бронь создается со статусом "подтверждено"</li>
+                        <li class="mb-2">6. <strong>Готово</strong> - бронирование появится в вашем личном кабинете</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-warning text-white">
+                    <h5 class="mb-0"><i class="bi bi-exclamation-triangle me-2"></i>Важная информация</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Минимальное время бронирования - 1 час</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Бронирование подтверждается автоматически</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Цена зависит от времени ({{ zones.0.price_per_hour }} руб./час)</li>
+                        <li><i class="bi bi-check-circle text-success me-2"></i>Доступность обновляется в реальном времени</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-clock me-2"></i>Текущее время</h5>
+                </div>
+                <div class="card-body">
+                    <p id="current-time"></p>
+                    <p class="mb-0"><small>Информация обновляется каждые 30 секунд</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const startTimeInput = document.getElementById('start_time');
+    const endTimeInput = document.getElementById('end_time');
+    const timeAvailabilityInfo = document.getElementById('time-availability-info');
+    const availabilityMessage = document.getElementById('availability-message');
+    const submitBtn = document.getElementById('submit-btn');
+    const bookingForm = document.getElementById('bookingForm');
+    const zoneInputs = document.querySelectorAll('input[name="zone"]');
+    const zoneError = document.getElementById('zone-error');
+    const numberOfPeopleSelect = document.getElementById('number_of_people');
+    
+    function updateCurrentTime() {
+        const now = new Date();
+        document.getElementById('current-time').textContent = now.toLocaleString('ru-RU');
+    }
+    updateCurrentTime();
+    setInterval(updateCurrentTime, 1000);
+    
+    function updateAllZonesAvailability() {
+        fetch('/api/availability/')
+            .then(response => response.json())
+            .then(data => {
+                data.zones.forEach(zone => {
+                    const availableElement = document.getElementById(`available-zone-${zone.id}`);
+                    const badgeElement = document.getElementById(`badge-zone-${zone.id}`);
+                    
+                    if (availableElement) {
+                        availableElement.textContent = zone.available_seats;
+                    }
+                    
+                    if (badgeElement) {
+                        let badgeClass = 'badge ';
+                        let badgeText = '';
+                        
+                        if (zone.available_seats === 0) {
+                            badgeClass += 'bg-danger';
+                            badgeText = 'Занято';
+                            const radioBtn = document.getElementById(`zone${zone.id}`);
+                            if (radioBtn) {
+                                radioBtn.disabled = true;
+                                if (radioBtn.checked) {
+                                    radioBtn.checked = false;
+                                    zoneError.style.display = 'block';
+                                }
+                            }
+                        } else if (zone.available_seats < zone.capacity) {
+                            badgeClass += 'bg-warning text-dark';
+                            badgeText = `${zone.available_seats}/${zone.capacity}`;
+                            const radioBtn = document.getElementById(`zone${zone.id}`);
+                            if (radioBtn) radioBtn.disabled = false;
+                        } else {
+                            badgeClass += 'bg-success';
+                            badgeText = 'Свободно';
+                            const radioBtn = document.getElementById(`zone${zone.id}`);
+                            if (radioBtn) radioBtn.disabled = false;
+                        }
+                        
+                        badgeElement.innerHTML = `<span class="${badgeClass}">${badgeText}</span>`;
+                    }
+                });
+                
+                console.log('Доступность зон обновлена:', new Date().toLocaleTimeString());
+            })
+            .catch(error => {
+                console.error('Ошибка при обновлении доступности:', error);
+            });
+    }
+    
+    function checkTimeAvailability() {
+        const selectedZone = document.querySelector('input[name="zone"]:checked');
+        const startTime = startTimeInput.value;
+        const endTime = endTimeInput.value;
+        const numberOfPeople = numberOfPeopleSelect ? numberOfPeopleSelect.value : 1;
+        
+        if (!selectedZone || !startTime || !endTime) {
+            timeAvailabilityInfo.style.display = 'none';
+            return;
+        }
+        
+        const zoneId = selectedZone.value;
+        
+        const start = new Date(startTime);
+        const end = new Date(endTime);
+        const now = new Date();
+        
+        if (start < now) {
+            availabilityMessage.textContent = 'Время начала не может быть в прошлом';
+            timeAvailabilityInfo.className = 'alert alert-warning';
+            timeAvailabilityInfo.style.display = 'block';
+            submitBtn.disabled = true;
+            return;
+        }
+        
+        if (end <= start) {
+            availabilityMessage.textContent = 'Время окончания должно быть позже времени начала';
+            timeAvailabilityInfo.className = 'alert alert-warning';
+            timeAvailabilityInfo.style.display = 'block';
+            submitBtn.disabled = true;
+            return;
+        }
+        
+        const timeDiff = (end - start) / (1000 * 60 * 60);
+        if (timeDiff < 1) {
+            availabilityMessage.textContent = 'Минимальное время бронирования - 1 час';
+            timeAvailabilityInfo.className = 'alert alert-warning';
+            timeAvailabilityInfo.style.display = 'block';
+            submitBtn.disabled = true;
+            return;
+        }
+        
+        fetch(`/api/check_zone_availability/${zoneId}/?start_time=${startTime}&end_time=${endTime}&number_of_people=${numberOfPeople}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.available) {
+                    availabilityMessage.textContent = `На выбранное время доступно ${data.available_seats} мест. Можно забронировать для ${numberOfPeople} человек.`;
+                    timeAvailabilityInfo.className = 'alert alert-success';
+                    timeAvailabilityInfo.style.display = 'block';
+                    submitBtn.disabled = false;
+                } else {
+                    availabilityMessage.textContent = data.message || `Недостаточно мест для ${numberOfPeople} человек. ${data.available_seats ? `Доступно только ${data.available_seats} мест.` : 'Занято.'}`;
+                    timeAvailabilityInfo.className = 'alert alert-danger';
+                    timeAvailabilityInfo.style.display = 'block';
+                    submitBtn.disabled = true;
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка проверки доступности:', error);
+                timeAvailabilityInfo.style.display = 'none';
+                submitBtn.disabled = false;
+            });
+    }
+    
+    zoneInputs.forEach(radio => {
+        radio.addEventListener('change', function() {
+            zoneError.style.display = 'none';
+            const selectedZone = document.querySelector('input[name="zone"]:checked');
+            if (selectedZone) {
+                const zoneCapacity = parseInt(selectedZone.getAttribute('data-zone-capacity'));
+                if (numberOfPeopleSelect) {
+                    const currentValue = parseInt(numberOfPeopleSelect.value);
+                    if (currentValue > zoneCapacity) {
+                        numberOfPeopleSelect.value = zoneCapacity;
+                    }
+                }
+            }
+            checkTimeAvailability();
+        });
+    });
+    
+    if (numberOfPeopleSelect) {
+        numberOfPeopleSelect.addEventListener('change', function() {
+            const selectedZone = document.querySelector('input[name="zone"]:checked');
+            if (selectedZone) {
+                const zoneCapacity = parseInt(selectedZone.getAttribute('data-zone-capacity'));
+                const selectedPeople = parseInt(this.value);
+                
+                if (selectedPeople > zoneCapacity) {
+                    alert(`Максимальная вместимость выбранной зоны - ${zoneCapacity} человек. Пожалуйста, выберите другую зону или уменьшите количество человек.`);
+                    this.value = Math.min(selectedPeople, zoneCapacity);
+                }
+            }
+            checkTimeAvailability();
+        });
+    }
+    
+    if (startTimeInput) {
+        startTimeInput.addEventListener('change', checkTimeAvailability);
+    }
+    
+    if (endTimeInput) {
+        endTimeInput.addEventListener('change', checkTimeAvailability);
+    }
+    
+    bookingForm.addEventListener('submit', function(e) {
+        let hasError = false;
+        const selectedZone = document.querySelector('input[name="zone"]:checked');
+        if (!selectedZone) {
+            zoneError.style.display = 'block';
+            hasError = true;
+        } else {
+            zoneError.style.display = 'none';
+            
+            const zoneCapacity = parseInt(selectedZone.getAttribute('data-zone-capacity'));
+            const numberOfPeople = parseInt(numberOfPeopleSelect ? numberOfPeopleSelect.value : 1);
+            
+            if (numberOfPeople > zoneCapacity) {
+                alert(`Ошибка: выбранная зона вмещает только ${zoneCapacity} человек, а вы указали ${numberOfPeople}. Пожалуйста, уменьшите количество человек или выберите другую зону.`);
+                hasError = true;
+            }
+        }
+        
+        const requiredFields = ['name', 'phone', 'email', 'start_time', 'end_time'];
+        requiredFields.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field && !field.value.trim()) {
+                field.classList.add('is-invalid');
+                hasError = true;
+            } else if (field) {
+                field.classList.remove('is-invalid');
+            }
+        });
+        
+        const emailField = document.getElementById('email');
+        if (emailField && emailField.value) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailField.value)) {
+                emailField.classList.add('is-invalid');
+                emailField.nextElementSibling.textContent = 'Пожалуйста, введите корректный email адрес.';
+                hasError = true;
+            }
+        }
+        
+        if (hasError) {
+            e.preventDefault();
+            const firstError = document.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        } else {
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Обработка...';
+            submitBtn.disabled = true;
+        }
+    });
+    
+    if (startTimeInput) {
+        startTimeInput.addEventListener('change', function() {
+            if (this.value) {
+                const minEndTime = new Date(this.value);
+                minEndTime.setHours(minEndTime.getHours() + 1);
+                endTimeInput.min = minEndTime.toISOString().slice(0, 16);
+                
+                if (endTimeInput.value && new Date(endTimeInput.value) < minEndTime) {
+                    endTimeInput.value = minEndTime.toISOString().slice(0, 16);
+                }
+            }
+        });
+    }
+    
+    // Автозаполнение данных для авторизованных пользователей
+    {% if user.is_authenticated %}
+    if (!document.getElementById('name').value && '{{ user.first_name }}') {
+        document.getElementById('name').value = '{{ user.first_name }}';
+    }
+    if (!document.getElementById('phone').value && '{{ user.profile.phone }}') {
+        document.getElementById('phone').value = '{{ user.profile.phone }}';
+    }
+    if (!document.getElementById('email').value && '{{ user.email }}') {
+        document.getElementById('email').value = '{{ user.email }}';
+    }
+    {% endif %}
+    
+    updateAllZonesAvailability();
+    
+    setInterval(updateAllZonesAvailability, 30000);
+});
+</script>
+{% endblock %}
